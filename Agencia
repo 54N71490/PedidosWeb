@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PedidoWeb – Más pedidos para tu restaurante</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A24A;
+    --gold-light: #E2BE72;
+    --gold-dark: #9E7C2E;
+    --bg: #0B0B0B;
+    --surface: #141414;
+    --surface2: #1A1A1A;
+    --text: #F5F0E8;
+    --muted: #888;
+    --border: rgba(201,162,74,0.15);
+    --whatsapp: #25D366;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 2px; }
+
+  /* ─── TYPOGRAPHY ─── */
+  .display { font-family: 'Playfair Display', serif; }
+  .gold { color: var(--gold); }
+  .muted { color: var(--muted); }
+
+  /* ─── GOLD LINE ─── */
+  .gold-line {
+    width: 48px; height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    margin-bottom: 1rem;
+  }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    display: inline-flex; align-items: center; gap: .5rem;
+    padding: .85rem 1.8rem;
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    font-size: .9rem; font-weight: 600;
+    cursor: pointer; border: none;
+    text-decoration: none;
+    transition: all .3s ease;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: #0B0B0B;
+    box-shadow: 0 4px 20px rgba(201,162,74,.3);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(201,162,74,.5);
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  }
+  .btn-outline {
+    background: transparent;
+    color: var(--gold);
+    border: 1.5px solid var(--gold);
+  }
+  .btn-outline:hover {
+    background: rgba(201,162,74,.08);
+    transform: translateY(-2px);
+  }
+  .btn-whatsapp {
+    background: var(--whatsapp);
+    color: #fff;
+    font-size: 1rem;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 20px rgba(37,211,102,.25);
+  }
+  .btn-whatsapp:hover {
+    background: #1ebe58;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(37,211,102,.4);
+  }
+  .btn-lg { padding: 1.1rem 2.4rem; font-size: 1.05rem; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 5%;
+    background: rgba(11,11,11,.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    transition: padding .3s;
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; color: var(--gold);
+    letter-spacing: .5px;
+  }
+  .nav-logo span { color: var(--text); }
+  .nav-cta { display: flex; gap: .75rem; }
+  @media(max-width:600px){
+    .nav-cta .btn-outline { display: none; }
+    .btn { padding: .7rem 1.2rem; font-size: .82rem; }
+  }
+
+  /* ─── SECTIONS ─── */
+  section { padding: 6rem 5%; }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .section-label {
+    font-size: .75rem; font-weight: 600; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--gold); margin-bottom: .5rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    line-height: 1.2; margin-bottom: 1rem;
+  }
+  .section-sub {
+    color: var(--muted); font-size: 1rem; max-width: 560px;
+    line-height: 1.7; margin-bottom: 2.5rem;
+  }
+
+  /* ─── FADE-IN ─── */
+  .fade-in {
+    opacity: 0; transform: translateY(28px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .fade-in.visible { opacity: 1; transform: none; }
+
+  /* ══════════════════════════════════════════
+     HERO
+  ══════════════════════════════════════════ */
+  #hero {
+    min-height: 100vh;
+    padding-top: 7rem;
+    display: flex; align-items: center;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 50%, rgba(201,162,74,.07) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 40% at 10% 80%, rgba(201,162,74,.04) 0%, transparent 60%),
+      var(--bg);
+    overflow: hidden;
+    position: relative;
+  }
+  #hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C9A24A' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 1;
+    pointer-events: none;
+  }
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem; align-items: center;
+    width: 100%; max-width: 1100px; margin: 0 auto;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: .4rem;
+    background: rgba(201,162,74,.1);
+    border: 1px solid rgba(201,162,74,.25);
+    border-radius: 20px; padding: .35rem .9rem;
+    font-size: .78rem; color: var(--gold); margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+  .hero-badge span { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; display: inline-block; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5.5vw, 3.6rem);
+    line-height: 1.12; margin-bottom: 1.3rem;
+  }
+  .hero-title em { font-style: italic; color: var(--gold); }
+
+  .hero-sub {
+    font-size: 1.05rem; color: var(--muted);
+    line-height: 1.75; margin-bottom: 2rem; max-width: 480px;
+  }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+
+  .hero-indicators {
+    display: flex; gap: 1.5rem; flex-wrap: wrap;
+  }
+  .indicator {
+    display: flex; align-items: center; gap: .4rem;
+    font-size: .82rem; color: var(--muted);
+  }
+  .indicator strong { color: var(--text); }
+
+  /* ─── Phone Mockup ─── */
+  .hero-visual { display: flex; justify-content: center; position: relative; }
+  .phone-wrap {
+    position: relative; width: 280px;
+    animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+
+  .phone {
+    width: 280px; border-radius: 36px;
+    border: 2px solid rgba(201,162,74,.3);
+    background: var(--surface);
+    overflow: hidden;
+    box-shadow:
+      0 0 0 8px rgba(201,162,74,.04),
+      0 30px 80px rgba(0,0,0,.7),
+      0 0 40px rgba(201,162,74,.12);
+  }
+  .phone-notch {
+    background: #000; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .phone-notch-pill {
+    width: 80px; height: 10px;
+    background: #1a1a1a; border-radius: 10px;
+  }
+  .phone-screen { padding: 0; }
+  .phone-header {
+    background: linear-gradient(135deg, #1a0a00, #2a1400);
+    padding: 1.2rem 1rem .8rem;
+    border-bottom: 1px solid rgba(201,162,74,.2);
+    display: flex; align-items: center; gap: .7rem;
+  }
+  .phone-logo-dot {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+  }
+  .phone-header-text h4 { font-size: .85rem; color: var(--text); font-weight: 600; }
+  .phone-header-text p { font-size: .68rem; color: var(--gold); }
+
+  .phone-menu { padding: .8rem; display: flex; flex-direction: column; gap: .6rem; }
+  .menu-section-title {
+    font-size: .65rem; text-transform: uppercase; letter-spacing: 2px;
+    color: var(--gold); font-weight: 600; padding: .3rem 0;
+  }
+  .menu-item {
+    display: flex; align-items: center; gap: .6rem;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 10px; padding: .5rem .6rem;
+  }
+  .menu-item-emoji { font-size: 1.3rem; min-width: 36px; text-align: center; }
+  .menu-item-info { flex: 1; }
+  .menu-item-name { font-size: .75rem; font-weight: 600; color: var(--text); }
+  .menu-item-price { font-size: .68rem; color: var(--gold); }
+
+  .phone-wa-btn {
+    margin: .6rem .8rem 1rem;
+    background: var(--whatsapp);
+    border-radius: 10px; padding: .7rem;
+    text-align: center;
+    font-size: .8rem; font-weight: 700; color: #fff;
+    display: flex; align-items: center; justify-content: center; gap: .4rem;
+  }
+
+  .phone-glow {
+    position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%);
+    width: 200px; height: 40px;
+    background: rgba(201,162,74,.2);
+    border-radius: 50%; filter: blur(20px);
+  }
+
+  @media(max-width:768px){
+    .hero-inner { grid-template-columns: 1fr; text-align: center; }
+    .hero-sub { margin: 0 auto 2rem; }
+    .hero-actions { justify-content: center; }
+    .hero-indicators { justify-content: center; }
+    .hero-visual { margin-top: 2rem; }
+    .phone-wrap { width: 240px; }
+    .phone { width: 240px; }
+  }
+
+  /* ══════════════════════════════════════════
+     PROBLEMA
+  ══════════════════════════════════════════ */
+  #problema {
+    background: linear-gradient(180deg, var(--bg) 0%, var(--surface) 100%);
+  }
+  .problema-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem; margin-top: 3rem;
+  }
+  .problema-card {
+    background: var(--surface2);
+    border: 1px solid rgba(255,80,80,.1);
+    border-radius: 16px; padding: 1.8rem;
+    transition: transform .3s, border-color .3s;
+    position: relative; overflow: hidden;
+  }
+  .problema-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #ff4d4d, transparent);
+  }
+  .problema-card:hover { transform: translateY(-4px); border-color: rgba(255,80,80,.25); }
+  .problema-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .problema-card h3 { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: .5rem; }
+  .problema-card p { font-size: .88rem; color: var(--muted); line-height: 1.6; }
+
+  /* ══════════════════════════════════════════
+     SOLUCIÓN
+  ══════════════════════════════════════════ */
+  #solucion { background: var(--surface); }
+  .solucion-inner {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+  }
+  .solucion-list { display: flex; flex-direction: column; gap: 1.2rem; margin-top: 1.5rem; }
+  .solucion-item {
+    display: flex; gap: 1rem; align-items: flex-start;
+    background: rgba(201,162,74,.04);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.1rem 1.3rem;
+    transition: all .3s;
+  }
+  .solucion-item:hover { background: rgba(201,162,74,.08); border-color: rgba(201,162,74,.3); transform: translateX(4px); }
+  .solucion-item-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .solucion-item-text h4 { font-size: .9rem; font-weight: 600; color: var(--text); margin-bottom: .25rem; }
+  .solucion-item-text p { font-size: .82rem; color: var(--muted); line-height: 1.5; }
+
+  .solucion-visual {
+    position: relative; display: flex; justify-content: center;
+  }
+  .laptop-wrap { position: relative; }
+  .laptop {
+    width: 340px;
+    background: var(--surface2);
+    border-radius: 16px;
+    border: 1.5px solid rgba(201,162,74,.25);
+    box-shadow: 0 20px 60px rgba(0,0,0,.6), 0 0 30px rgba(201,162,74,.08);
+    overflow: hidden;
+  }
+  .laptop-bar {
+    height: 28px; background: #111;
+    display: flex; align-items: center; padding: 0 10px; gap: 6px;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+  .laptop-url { flex: 1; text-align: center; }
+  .laptop-url span {
+    font-size: .6rem; color: var(--muted);
+    background: rgba(255,255,255,.05); border-radius: 4px;
+    padding: .15rem .5rem;
+  }
+  .laptop-screen { padding: .8rem; min-height: 220px; }
+  .web-header-demo {
+    background: linear-gradient(135deg, #1a0800, #2d1200);
+    border-radius: 10px; padding: 1rem;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: .7rem;
+    border: 1px solid rgba(201,162,74,.15);
+  }
+  .web-logo-demo { font-family: 'Playfair Display', serif; font-size: .9rem; color: var(--gold); }
+  .web-nav-demo { display: flex; gap: .6rem; }
+  .web-nav-demo span { font-size: .6rem; color: var(--muted); cursor: pointer; }
+
+  .web-hero-demo {
+    background: radial-gradient(ellipse at center, rgba(201,162,74,.15) 0%, transparent 70%);
+    border-radius: 10px; padding: 1.2rem; text-align: center; margin-bottom: .7rem;
+    border: 1px solid var(--border);
+  }
+  .web-hero-demo h5 { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--text); margin-bottom: .3rem; }
+  .web-hero-demo p { font-size: .62rem; color: var(--muted); margin-bottom: .6rem; }
+  .web-wa-btn-demo {
+    display: inline-block; background: var(--whatsapp); color: #fff;
+    border-radius: 6px; padding: .35rem .8rem; font-size: .65rem; font-weight: 700;
+  }
+  .web-grid-demo { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+  .web-card-demo {
+    background: rgba(255,255,255,.03); border-radius: 8px;
+    border: 1px solid rgba(255,255,255,.06);
+    padding: .6rem; text-align: center;
+  }
+  .web-card-demo .emoji { font-size: 1.2rem; }
+  .web-card-demo p { font-size: .6rem; color: var(--muted); margin-top: .2rem; }
+  .web-card-demo strong { font-size: .68rem; color: var(--gold); display: block; }
+
+  @media(max-width:768px){
+    .solucion-inner { grid-template-columns: 1fr; }
+    .solucion-visual { margin-top: 2rem; }
+    .laptop { width: 100%; max-width: 340px; }
+  }
+
+  /* ══════════════════════════════════════════
+     DEMO
+  ══════════════════════════════════════════ */
+  #demo {
+    background: var(--bg);
+    text-align: center;
+  }
+  .demo-frame-wrap {
+    margin: 3rem auto 0;
+    max-width: 800px;
+    position: relative;
+  }
+  .demo-frame {
+    background: var(--surface);
+    border-radius: 20px;
+    border: 1px solid rgba(201,162,74,.2);
+    padding: 3rem 2rem;
+    box-shadow: 0 20px 80px rgba(0,0,0,.5), 0 0 60px rgba(201,162,74,.06);
+    position: relative;
+    overflow: hidden;
+  }
+  .demo-frame::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(201,162,74,.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .demo-inner-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+  .demo-card {
+    background: rgba(201,162,74,.04); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.2rem .8rem; text-align: center;
+    transition: all .3s;
+  }
+  .demo-card:hover { background: rgba(201,162,74,.1); border-color: rgba(201,162,74,.4); transform: scale(1.03); }
+  .demo-card .demo-emoji { font-size: 2rem; margin-bottom: .5rem; }
+  .demo-card h4 { font-size: .85rem; color: var(--text); font-weight: 600; }
+  .demo-card p { font-size: .75rem; color: var(--muted); margin-top: .2rem; }
+  .demo-tag {
+    display: inline-block; background: rgba(201,162,74,.12);
+    border: 1px solid rgba(201,162,74,.3); border-radius: 20px;
+    padding: .25rem .8rem; font-size: .75rem; color: var(--gold);
+    margin-bottom: 1.5rem;
+  }
+  @media(max-width:580px){ .demo-inner-grid { grid-template-columns: 1fr 1fr; } }
+
+  /* ══════════════════════════════════════════
+     BENEFICIOS
+  ══════════════════════════════════════════ */
+  #beneficios { background: var(--surface); }
+  .beneficios-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.2rem; margin-top: 3rem;
+  }
+  .bene-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 2rem 1.5rem;
+    text-align: center;
+    transition: all .35s;
+    position: relative; overflow: hidden;
+  }
+  .bene-card::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    transform: scaleX(0); transition: transform .35s;
+  }
+  .bene-card:hover { transform: translateY(-6px); border-color: rgba(201,162,74,.35); box-shadow: 0 12px 40px rgba(0,0,0,.4); }
+  .bene-card:hover::after { transform: scaleX(1); }
+  .bene-icon { font-size: 2.2rem; margin-bottom: 1rem; }
+  .bene-card h3 { font-size: .95rem; font-weight: 700; color: var(--text); margin-bottom: .4rem; }
+  .bene-card p { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+
+  /* ══════════════════════════════════════════
+     PRECIOS
+  ══════════════════════════════════════════ */
+  #precios { background: var(--bg); }
+  .precios-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem; margin-top: 3rem; max-width: 780px; margin-left: auto; margin-right: auto;
+  }
+  .precio-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px; padding: 2.5rem 2rem;
+    position: relative; transition: all .35s;
+  }
+  .precio-card:hover { transform: translateY(-6px); }
+  .precio-card.featured {
+    border-color: rgba(201,162,74,.5);
+    background: linear-gradient(145deg, var(--surface) 0%, rgba(201,162,74,.04) 100%);
+    box-shadow: 0 0 40px rgba(201,162,74,.1);
+  }
+  .precio-badge {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: #0B0B0B; font-size: .72rem; font-weight: 700;
+    padding: .3rem 1rem; border-radius: 20px; white-space: nowrap;
+    letter-spacing: .5px;
+  }
+  .precio-name { font-size: .8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: .5rem; }
+  .precio-amount { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--gold); margin-bottom: .25rem; }
+  .precio-period { font-size: .78rem; color: var(--muted); margin-bottom: 1.8rem; }
+  .precio-divider { height: 1px; background: var(--border); margin-bottom: 1.5rem; }
+  .precio-features { list-style: none; display: flex; flex-direction: column; gap: .8rem; margin-bottom: 2rem; }
+  .precio-features li {
+    font-size: .88rem; color: var(--muted);
+    display: flex; align-items: center; gap: .6rem;
+  }
+  .precio-features li::before {
+    content: '✓'; color: var(--gold);
+    font-weight: 700; font-size: .9rem; flex-shrink: 0;
+  }
+
+  /* ══════════════════════════════════════════
+     SOCIAL PROOF
+  ══════════════════════════════════════════ */
+  #social { background: var(--surface); }
+  .social-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 1.5rem; margin-top: 3rem; }
+  .social-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 1.8rem;
+    transition: transform .3s;
+  }
+  .social-card:hover { transform: translateY(-4px); }
+  .social-stars { color: var(--gold); font-size: 1rem; margin-bottom: .8rem; }
+  .social-text { font-size: .88rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.2rem; font-style: italic; }
+  .social-author { display: flex; align-items: center; gap: .8rem; }
+  .social-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; font-weight: 700; color: #0B0B0B;
+  }
+  .social-name { font-size: .85rem; font-weight: 600; color: var(--text); }
+  .social-biz { font-size: .75rem; color: var(--gold); }
+
+  .social-stats {
+    display: flex; justify-content: center; gap: 3rem;
+    flex-wrap: wrap; margin-top: 3rem;
+    padding: 2rem; background: rgba(201,162,74,.04);
+    border: 1px solid var(--border); border-radius: 16px;
+  }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--gold); }
+  .stat-label { font-size: .78rem; color: var(--muted); }
+
+  /* ══════════════════════════════════════════
+     CTA FINAL
+  ══════════════════════════════════════════ */
+  #cta-final {
+    background: linear-gradient(135deg, #0f0a02 0%, var(--bg) 50%, #060b04 100%);
+    text-align: center; position: relative; overflow: hidden;
+  }
+  #cta-final::before {
+    content: '';
+    position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(201,162,74,.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cta-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.15;
+    margin-bottom: 1rem; position: relative;
+  }
+  .cta-sub { color: var(--muted); max-width: 480px; margin: 0 auto 2.5rem; font-size: .95rem; }
+  .cta-actions { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+  .cta-note { font-size: .78rem; color: var(--muted); }
+
+  /* ══════════════════════════════════════════
+     FOOTER
+  ══════════════════════════════════════════ */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 5%;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1.5rem;
+  }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--gold); }
+  .footer-tagline { font-size: .78rem; color: var(--muted); margin-top: .2rem; }
+  .footer-links { display: flex; gap: 1.2rem; align-items: center; }
+  .footer-link {
+    font-size: .82rem; color: var(--muted); text-decoration: none;
+    display: flex; align-items: center; gap: .35rem;
+    transition: color .3s;
+  }
+  .footer-link:hover { color: var(--gold); }
+  .footer-copy { font-size: .75rem; color: #444; }
+  @media(max-width:580px){
+    footer { flex-direction: column; text-align: center; }
+    .footer-links { justify-content: center; }
+  }
+
+  /* ══════════════════════════════════════════
+     FLOATING WHATSAPP
+  ══════════════════════════════════════════ */
+  .wa-float {
+    position: fixed; bottom: 1.8rem; right: 1.8rem; z-index: 200;
+    display: flex; align-items: center; gap: .6rem;
+    text-decoration: none;
+    animation: wa-bounce .6s .8s both;
+  }
+  @keyframes wa-bounce { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+  .wa-float-btn {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--whatsapp);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 20px rgba(37,211,102,.4);
+    transition: transform .3s, box-shadow .3s;
+    position: relative;
+  }
+  .wa-float-btn::before {
+    content: '';
+    position: absolute; inset: -4px;
+    border-radius: 50%; border: 2px solid rgba(37,211,102,.3);
+    animation: ripple 2.5s infinite;
+  }
+  @keyframes ripple { 0%{transform:scale(1);opacity:.6} 100%{transform:scale(1.5);opacity:0} }
+  .wa-float:hover .wa-float-btn { transform: scale(1.08); box-shadow: 0 8px 30px rgba(37,211,102,.5); }
+  .wa-float-label {
+    background: var(--surface);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: .4rem .8rem; font-size: .78rem; color: var(--text); white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,.4);
+    pointer-events: none;
+    opacity: 0; transform: translateX(8px);
+    transition: all .3s;
+  }
+  .wa-float:hover .wa-float-label { opacity: 1; transform: none; }
+
+  /* ─── util ─── */
+  .text-center { text-align: center; }
+  .mx-auto { margin-left: auto; margin-right: auto; }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <div class="nav-logo">Pedido<span>Web</span></div>
+  <div class="nav-cta">
+    <a href="#precios" class="btn btn-outline">Ver planes</a>
+    <a href="https://wa.me/573000000000?text=Hola%2C%20quiero%20una%20demo%20gratis%20para%20mi%20restaurante" target="_blank" class="btn btn-primary">Hablar ahora 📲</a>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section id="hero">
+  <div class="hero-inner">
+
+    <div class="hero-copy fade-in">
+      <div class="hero-badge"><span></span> Agencia especializada en restaurantes</div>
+      <h1 class="hero-title">
+        Convierte visitantes<br>en <em>pedidos reales</em>
+      </h1>
+      <p class="hero-sub">
+        Creamos páginas web para restaurantes que generan pedidos directos por WhatsApp. Sin complicaciones. Sin plataformas intermediarias.
+      </p>
+      <div class="hero-actions">
+        <a href="https://wa.me/573000000000?text=Hola%2C%20quiero%20una%20demo%20gratis%20para%20mi%20restaurante" target="_blank" class="btn btn-primary btn-lg">Solicitar demo GRATIS 🚀</a>
+        <a href="#demo" class="btn btn-outline btn-lg">Ver ejemplo</a>
+      </div>
+      <div class="hero-indicators">
+        <div class="indicator">⚡ <strong>Entrega rápida</strong></div>
+        <div class="indicator">📲 <strong>Integración WhatsApp</strong></div>
+        <div class="indicator">🍔 <strong>Para restaurantes</strong></div>
+      </div>
+    </div>
+
+    <div class="hero-visual fade-in" style="transition-delay:.2s">
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+          <div class="phone-screen">
+            <div class="phone-header">
+              <div class="phone-logo-dot">🍔</div>
+              <div class="phone-header-text">
+                <h4>Burger House</h4>
+                <p>★ Pedido rápido disponible</p>
+              </div>
+            </div>
+            <div class="phone-menu">
+              <div class="menu-section-title">🔥 Más pedidos</div>
+              <div class="menu-item">
+                <div class="menu-item-emoji">🍔</div>
+                <div class="menu-item-info">
+                  <div class="menu-item-name">Classic Burger</div>
+                  <div class="menu-item-price">$18.000 COP</div>
+                </div>
+              </div>
+              <div class="menu-item">
+                <div class="menu-item-emoji">🍟</div>
+                <div class="menu-item-info">
+                  <div class="menu-item-name">Papas crujientes</div>
+                  <div class="menu-item-price">$8.500 COP</div>
+                </div>
+              </div>
+              <div class="menu-item">
+                <div class="menu-item-emoji">🧃</div>
+                <div class="menu-item-info">
+                  <div class="menu-item-name">Limonada natural</div>
+                  <div class="menu-item-price">$6.000 COP</div>
+                </div>
+              </div>
+            </div>
+            <div class="phone-wa-btn">
+              💬 Pedir por WhatsApp ahora
+            </div>
+          </div>
+        </div>
+        <div class="phone-glow"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── PROBLEMA ─── -->
+<section id="problema">
+  <div class="container">
+    <div class="fade-in">
+      <div class="gold-line"></div>
+      <div class="section-label">El problema</div>
+      <h2 class="section-title">¿Por qué estás perdiendo <span class="gold">clientes?</span></h2>
+      <p class="section-sub">La mayoría de restaurantes dependen de canales que limitan sus ventas. Esto te cuesta más clientes de lo que crees.</p>
+    </div>
+    <div class="problema-grid">
+      <div class="problema-card fade-in">
+        <div class="problema-icon">😔</div>
+        <h3>Sin página web, sin presencia</h3>
+        <p>Si tu restaurante no aparece en Google con una página propia, los clientes simplemente se van a la competencia. Así de simple.</p>
+      </div>
+      <div class="problema-card fade-in" style="transition-delay:.1s">
+        <div class="problema-icon">📉</div>
+        <h3>Instagram no es suficiente</h3>
+        <p>Depender solo de Instagram limita tus ventas. El alcance orgánico cae, los pedidos por DM se pierden, y no tienes control.</p>
+      </div>
+      <div class="problema-card fade-in" style="transition-delay:.2s">
+        <div class="problema-icon">💸</div>
+        <h3>Plataformas que cobran comisión</h3>
+        <p>Rappi, iFood y similares se quedan entre el 20% y 35% de cada pedido. Estás trabajando para ellos, no para ti.</p>
+      </div>
+      <div class="problema-card fade-in" style="transition-delay:.3s">
+        <div class="problema-icon">😤</div>
+        <h3>Clientes quieren menú rápido</h3>
+        <p>Cuando alguien tiene hambre, no tiene tiempo. Si tu menú no está claro en segundos, perdiste el pedido.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SOLUCIÓN ─── -->
+<section id="solucion">
+  <div class="container">
+    <div class="solucion-inner">
+      <div class="fade-in">
+        <div class="gold-line"></div>
+        <div class="section-label">La solución</div>
+        <h2 class="section-title">Tu restaurante,<br><span class="gold">listo para vender</span></h2>
+        <p class="section-sub">En PedidoWeb creamos páginas web optimizadas para que tus clientes vean tu menú y pidan en segundos por WhatsApp.</p>
+        <div class="solucion-list">
+          <div class="solucion-item">
+            <div class="solucion-item-icon">📋</div>
+            <div class="solucion-item-text">
+              <h4>Menú digital claro y atractivo</h4>
+              <p>Fotos, precios y descripciones organizados para despertar el antojo desde el primer scroll.</p>
+            </div>
+          </div>
+          <div class="solucion-item">
+            <div class="solucion-item-icon">💬</div>
+            <div class="solucion-item-text">
+              <h4>Botón directo a WhatsApp</h4>
+              <p>Un solo toque y el cliente ya está hablando contigo. Sin apps, sin cuentas, sin fricción.</p>
+            </div>
+          </div>
+          <div class="solucion-item">
+            <div class="solucion-item-icon">🎨</div>
+            <div class="solucion-item-text">
+              <h4>Diseño que genera antojo</h4>
+              <p>Visual elegante y apetitoso adaptado a la personalidad de tu negocio.</p>
+            </div>
+          </div>
+          <div class="solucion-item">
+            <div class="solucion-item-icon">🛡️</div>
+            <div class="solucion-item-text">
+              <h4>Más confianza para el cliente</h4>
+              <p>Una web profesional hace que los clientes confíen más en tu restaurante antes de pedir.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="solucion-visual fade-in" style="transition-delay:.15s">
+        <div class="laptop-wrap">
+          <div class="laptop">
+            <div class="laptop-bar">
+              <div class="dot dot-r"></div>
+              <div class="dot dot-y"></div>
+              <div class="dot dot-g"></div>
+              <div class="laptop-url"><span>www.turestaurante.com</span></div>
+            </div>
+            <div class="laptop-screen">
+              <div class="web-header-demo">
+                <div class="web-logo-demo">🍕 La Italiana</div>
+                <div class="web-nav-demo">
+                  <span>Menú</span><span>Nosotros</span>
+                </div>
+              </div>
+              <div class="web-hero-demo">
+                <h5>Pizzas artesanales a domicilio</h5>
+                <p>Hecho con ingredientes frescos, listo en 30 min</p>
+                <div class="web-wa-btn-demo">💬 Pedir por WhatsApp</div>
+              </div>
+              <div class="web-grid-demo">
+                <div class="web-card-demo">
+                  <div class="emoji">🍕</div>
+                  <strong>Margarita</strong>
+                  <p>$28.000</p>
+                </div>
+                <div class="web-card-demo">
+                  <div class="emoji">🍕</div>
+                  <strong>Pepperoni</strong>
+                  <p>$32.000</p>
+                </div>
+                <div class="web-card-demo">
+                  <div class="emoji">🍕</div>
+                  <strong>4 Quesos</strong>
+                  <p>$34.000</p>
+                </div>
+                <div class="web-card-demo">
+                  <div class="emoji">🥤</div>
+                  <strong>Gaseosa</strong>
+                  <p>$5.000</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DEMO ─── -->
+<section id="demo">
+  <div class="container text-center">
+    <div class="fade-in">
+      <div class="gold-line mx-auto" style="margin:0 auto 1rem"></div>
+      <div class="section-label">Ejemplo real</div>
+      <h2 class="section-title">Mira cómo se vería <span class="gold">tu restaurante</span> online</h2>
+      <p class="section-sub mx-auto">Diseños únicos, pensados para vender. Adaptados a tu marca y tu tipo de comida.</p>
+    </div>
+    <div class="demo-frame-wrap fade-in" style="transition-delay:.1s">
+      <div class="demo-frame">
+        <div class="demo-tag">✨ Así se ve tu web en acción</div>
+        <div class="demo-inner-grid">
+          <div class="demo-card">
+            <div class="demo-emoji">🍔</div>
+            <h4>Hamburguesas</h4>
+            <p>Diseño oscuro premium</p>
+          </div>
+          <div class="demo-card">
+            <div class="demo-emoji">🍕</div>
+            <h4>Pizzerías</h4>
+            <p>Estilo italiano cálido</p>
+          </div>
+          <div class="demo-card">
+            <div class="demo-emoji">🌮</div>
+            <h4>Comida rápida</h4>
+            <p>Colores vibrantes</p>
+          </div>
+          <div class="demo-card">
+            <div class="demo-emoji">🍱</div>
+            <h4>Comida oriental</h4>
+            <p>Minimalista y elegante</p>
+          </div>
+          <div class="demo-card">
+            <div class="demo-emoji">🥩</div>
+            <h4>Asaderos</h4>
+            <p>Rústico y apetitoso</p>
+          </div>
+          <div class="demo-card">
+            <div class="demo-emoji">🧁</div>
+            <h4>Cafeterías</h4>
+            <p>Fresco y acogedor</p>
+          </div>
+        </div>
+        <a href="https://wa.me/573000000000?text=Hola%2C%20quiero%20algo%20as%C3%AD%20para%20mi%20restaurante" target="_blank" class="btn btn-primary btn-lg">Quiero algo así 🚀</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── BENEFICIOS ─── -->
+<section id="beneficios">
+  <div class="container">
+    <div class="fade-in text-center">
+      <div class="gold-line mx-auto" style="margin:0 auto 1rem"></div>
+      <div class="section-label">Beneficios</div>
+      <h2 class="section-title">Todo lo que ganas con <span class="gold">PedidoWeb</span></h2>
+    </div>
+    <div class="beneficios-grid">
+      <div class="bene-card fade-in">
+        <div class="bene-icon">🚀</div>
+        <h3>Más pedidos</h3>
+        <p>Cada visita a tu página se convierte en una oportunidad real de venta.</p>
+      </div>
+      <div class="bene-card fade-in" style="transition-delay:.08s">
+        <div class="bene-icon">📲</div>
+        <h3>Clientes más fáciles</h3>
+        <p>Un clic y el cliente ya está en tu WhatsApp. Sin apps ni cuentas extra.</p>
+      </div>
+      <div class="bene-card fade-in" style="transition-delay:.16s">
+        <div class="bene-icon">🎯</div>
+        <h3>Diseño para vender</h3>
+        <p>No es solo bonita. Cada elemento está pensado para que el cliente pida.</p>
+      </div>
+      <div class="bene-card fade-in" style="transition-delay:.24s">
+        <div class="bene-icon">⚡</div>
+        <h3>Entrega en 1–3 días</h3>
+        <p>Tu página lista y funcionando en tiempo récord. Sin esperas interminables.</p>
+      </div>
+      <div class="bene-card fade-in" style="transition-delay:.32s">
+        <div class="bene-icon">🔧</div>
+        <h3>Fácil de actualizar</h3>
+        <p>¿Cambiaste de precio o añadiste un plato? Te lo actualizamos rápido.</p>
+      </div>
+      <div class="bene-card fade-in" style="transition-delay:.4s">
+        <div class="bene-icon">💰</div>
+        <h3>Sin comisiones</h3>
+        <p>Cada pedido es 100% tuyo. Sin intermediarios que se lleven tu ganancia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PRECIOS ─── -->
+<section id="precios">
+  <div class="container">
+    <div class="fade-in text-center">
+      <div class="gold-line mx-auto" style="margin:0 auto 1rem"></div>
+      <div class="section-label">Planes</div>
+      <h2 class="section-title">Precios <span class="gold">claros</span>, sin sorpresas</h2>
+      <p class="section-sub mx-auto">Una sola inversión y tu restaurante empieza a recibir más pedidos desde el primer día.</p>
+    </div>
+    <div class="precios-grid fade-in" style="transition-delay:.1s">
+
+      <div class="precio-card">
+        <div class="precio-name">Plan Básico</div>
+        <div class="precio-amount">$300.000</div>
+        <div class="precio-period">COP · Pago único</div>
+        <div class="precio-divider"></div>
+        <ul class="precio-features">
+          <li>Página web completa</li>
+          <li>Botón de pedido por WhatsApp</li>
+          <li>Menú digital con fotos</li>
+          <li>Diseño adaptado a celular</li>
+          <li>Entrega en 1–3 días hábiles</li>
+          <li>Dominio incluido primer año</li>
+        </ul>
+        <a href="https://wa.me/573000000000?text=Hola%2C%20me%20interesa%20el%20Plan%20B%C3%A1sico" target="_blank" class="btn btn-outline" style="width:100%;justify-content:center">Elegir Básico</a>
+      </div>
+
+      <div class="precio-card featured">
+        <div class="precio-badge">⭐ Más popular</div>
+        <div class="precio-name">Plan Pro</div>
+        <div class="precio-amount">$450.000</div>
+        <div class="precio-period">COP · Pago único</div>
+        <div class="precio-divider"></div>
+        <ul class="precio-features">
+          <li>Todo lo del Plan Básico</li>
+          <li>Personalización premium</li>
+          <li>Galería de fotos del local</li>
+          <li>Sección de promociones</li>
+          <li>Google Maps integrado</li>
+          <li>Soporte por 30 días</li>
+          <li>2 actualizaciones de menú incluidas</li>
+        </ul>
+        <a href="https://wa.me/573000000000?text=Hola%2C%20me%20interesa%20el%20Plan%20Pro" target="_blank" class="btn btn-primary" style="width:100%;justify-content:center">Elegir Pro 🚀</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── SOCIAL PROOF ─── -->
+<section id="social">
+  <div class="container">
+    <div class="fade-in text-center">
+      <div class="gold-line mx-auto" style="margin:0 auto 1rem"></div>
+      <div class="section-label">Clientes</div>
+      <h2 class="section-title">Negocios que ya <span class="gold">confían en nosotros</span></h2>
+    </div>
+    <div class="social-grid">
+      <div class="social-card fade-in">
+        <div class="social-stars">★★★★★</div>
+        <p class="social-text">"Desde que tengo la página web, los pedidos por WhatsApp aumentaron. Mis clientes ahora ven el menú y piden sin problema."</p>
+        <div class="social-author">
+          <div class="social-avatar">M</div>
+          <div>
+            <div class="social-name">María Rodríguez</div>
+            <div class="social-biz">🍔 Burger Express, Medellín</div>
+          </div>
+        </div>
+      </div>
+      <div class="social-card fade-in" style="transition-delay:.1s">
+        <div class="social-stars">★★★★★</div>
+        <p class="social-text">"Antes dependía solo de Instagram. Ahora tengo mi propia página y los clientes me llegan directo. El proceso fue rapidísimo."</p>
+        <div class="social-author">
+          <div class="social-avatar">C</div>
+          <div>
+            <div class="social-name">Carlos Herrera</div>
+            <div class="social-biz">🌮 Tacos Don Carlos, Cali</div>
+          </div>
+        </div>
+      </div>
+      <div class="social-card fade-in" style="transition-delay:.2s">
+        <div class="social-stars">★★★★★</div>
+        <p class="social-text">"Excelente trabajo. La página quedó mejor de lo que esperaba y en menos de 2 días. Ya no pago comisiones a nadie."</p>
+        <div class="social-author">
+          <div class="social-avatar">L</div>
+          <div>
+            <div class="social-name">Luisa Pérez</div>
+            <div class="social-biz">🍕 La Pizzería de Luisa, Bogotá</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="social-stats fade-in" style="transition-delay:.1s;margin-top:2rem">
+      <div class="stat">
+        <div class="stat-num">+50</div>
+        <div class="stat-label">restaurantes ayudados</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">98%</div>
+        <div class="stat-label">clientes satisfechos</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">1–3</div>
+        <div class="stat-label">días de entrega</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">0%</div>
+        <div class="stat-label">comisión por pedido</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA FINAL ─── -->
+<section id="cta-final">
+  <div class="container">
+    <div class="fade-in">
+      <h2 class="cta-title display">
+        Empieza a recibir<br><span class="gold">más pedidos hoy</span>
+      </h2>
+      <p class="cta-sub">Tu página lista en 1–3 días. Sin complicaciones. Sin riesgos. La demo es completamente gratis.</p>
+      <div class="cta-actions">
+        <a href="https://wa.me/573000000000?text=Hola%2C%20quiero%20empezar%20a%20recibir%20m%C3%A1s%20pedidos%20con%20PedidoWeb" target="_blank" class="btn btn-whatsapp btn-lg">
+          💬 Hablar por WhatsApp ahora 🚀
+        </a>
+        <span class="cta-note">⚡ Respuesta en menos de 1 hora · Demo 100% gratis</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div>
+    <div class="footer-logo">PedidoWeb</div>
+    <div class="footer-tagline">Diseñamos para que vendas más</div>
+  </div>
+  <div class="footer-links">
+    <a href="https://instagram.com/pedidoweb" target="_blank" class="footer-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      @pedidoweb
+    </a>
+    <a href="https://wa.me/573000000000" target="_blank" class="footer-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      WhatsApp
+    </a>
+  </div>
+  <div class="footer-copy">© 2025 PedidoWeb · Todos los derechos reservados</div>
+</footer>
+
+<!-- ─── FLOATING WA ─── -->
+<a href="https://wa.me/573000000000?text=Hola%2C%20me%20interesa%20PedidoWeb" target="_blank" class="wa-float" aria-label="Chatear por WhatsApp">
+  <span class="wa-float-label">¡Hablemos ahora!</span>
+  <div class="wa-float-btn">💬</div>
+</a>
+
+<script>
+// ─── FADE IN ON SCROLL ───
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// ─── NAV SHRINK ───
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav');
+  if (window.scrollY > 60) {
+    nav.style.padding = '.8rem 5%';
+  } else {
+    nav.style.padding = '1.2rem 5%';
+  }
+});
+
+// ─── COUNTER ANIMATION ───
+function animateCounter(el, target, suffix = '') {
+  let start = 0;
+  const duration = 1800;
+  const step = (timestamp) => {
+    if (!start) start = timestamp;
+    const progress = Math.min((timestamp - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.floor(eased * target) + suffix;
+    if (progress < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+const statsObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const nums = e.target.querySelectorAll('.stat-num');
+      const data = [
+        { target: 50, suffix: '+' },
+        { target: 98, suffix: '%' },
+        { target: 3, suffix: '' },
+        { target: 0, suffix: '%' }
+      ];
+      nums.forEach((num, i) => {
+        animateCounter(num, data[i].target, data[i].suffix);
+      });
+      statsObserver.disconnect();
+    }
+  });
+}, { threshold: 0.4 });
+
+const statsEl = document.querySelector('.social-stats');
+if (statsEl) statsObserver.observe(statsEl);
+</script>
+</body>
+</html>
